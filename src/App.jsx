@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard.jsx";
+import Dashboard from "./pages/dashboard.jsx";
 import History from "./pages/history.jsx"; // Assuming you have a History component
 import Navbar from "./layout/navbar";
 import { bg } from "./assets/images/index.js";

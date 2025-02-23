@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
-import { fetchData } from "../../firebase";
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [fireStatus, setFireStatus] = useState("");
-  useEffect(() => {
-    fetchData("/fireStatus", (data) => setFireStatus(data));
-  }, []);
+
   return (
     <nav className="bg-gray-900 text-white shadow-lg font-heading font-bold">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
