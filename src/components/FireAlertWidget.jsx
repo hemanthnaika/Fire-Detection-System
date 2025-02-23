@@ -1,16 +1,23 @@
 import { useState, useEffect, useRef } from "react";
-import { fetchData } from "../../firebase"; // Import fetch function
+import { fetchData } from "../../firebase"; // Ensure fetchData is a valid function
 
 const FireAlertWidget = () => {
   const [fireDetected, setFireDetected] = useState(false);
   const [muted, setMuted] = useState(false);
-  const alertSoundRef = useRef(new Audio("/fire-alert.mp3")); // Persist Audio Instance
+  const alertSoundRef = useRef(null);
 
   useEffect(() => {
+    // Ensure we create the audio instance once
+    if (!alertSoundRef.current) {
+      alertSoundRef.current = new Audio("/fire-alert.mp3");
+      alertSoundRef.current.loop = true;
+    }
     const alertSound = alertSoundRef.current;
-    alertSound.loop = true; // Ensure looping until fire is gone
 
+    // Function to handle fire status updates
     const handleFireStatus = (data) => {
+      console.log("Fire status updated:", data); // Debugging log
+
       if (data === "🔥 Fire Detected!") {
         if (!fireDetected) {
           setFireDetected(true);
@@ -27,14 +34,20 @@ const FireAlertWidget = () => {
       }
     };
 
-    const unsubscribe = fetchData("/fireStatus", handleFireStatus);
-
-    return () => {
-      unsubscribe(); // Cleanup listener if `fetchData` supports it
-      alertSound.pause();
-      alertSound.currentTime = 0;
-    };
-  }, [fireDetected, muted]); // Depend on `fireDetected` & `muted`
+    // Ensure fetchData is a function before calling it
+    if (typeof fetchData === "function") {
+      const unsubscribe = fetchData("/fireStatus", handleFireStatus);
+      
+      return () => {
+        // Cleanup function: stop sound and remove listener
+        unsubscribe?.();
+        alertSound.pause();
+        alertSound.currentTime = 0;
+      };
+    } else {
+      console.error("fetchData is not a function. Check your import.");
+    }
+  }, [fireDetected, muted]);
 
   return (
     <div
